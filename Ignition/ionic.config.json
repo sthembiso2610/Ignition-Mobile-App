@@ -1,0 +1,7 @@
+{
+  "name": "Ignition",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
