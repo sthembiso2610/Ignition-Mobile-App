@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,14 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+public signatureImage: any;
+
+  constructor(private afauth: AngularFireAuth) {}
+
+  ngOnInit()
+  {
+   // this.afauth.signOut();
+
+  }
 
 }

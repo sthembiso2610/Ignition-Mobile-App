@@ -9,28 +9,47 @@
 
 <ion-content>
 
+  <ion-card >
+
+    <ion-card-header *ngIf="checkInStatus == false"> 
+      Choose a Vehicle to check out
+    </ion-card-header>
+    <ion-card-header   *ngIf="checkInStatus" > 
+      Checked out  vehicle
+    </ion-card-header>
+
+    <ion-card-content>
+
+    
 
   <ion-grid>
-<ion-row>
+<ion-row *ngIf="checkInStatus == false" >
   <ion-col class="ion-margin">
     Vehicle
   </ion-col>
   <ion-col class="ion-margin">
   Action
   </ion-col>
-</ion-row>
-<ion-row>
-  <ion-col class="ion-margin">
-
+</ion-row >
+<ion-row  *ngFor="let item of cars"> 
+  <ion-col col-6 class="ion-margin">
+     {{item.manufacturerName}}, {{item.modelName}}
   </ion-col>
-  <ion-col class="ion-margin">
-
+  
+  <div class="ion-margin" *ngIf="checkInStatus" size="7">
+    <ion-button size="small"  (click)="refuel(item)"> Refuel</ion-button>
+    <ion-button size="small" color="danger" (click)="checkIn(item)"> Check In</ion-button>
+  </div>
+  <ion-col col-3 *ngIf="checkInStatus == false">
+    <ion-button size="small" (click)="checkOut(item)" >Check Out</ion-button>
   </ion-col>
 
 </ion-row>
 
   </ion-grid>
 
+</ion-card-content>
 
+</ion-card>
   
 </ion-content>

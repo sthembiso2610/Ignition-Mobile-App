@@ -49,6 +49,11 @@ export class AppComponent {
         url   : "/vehicles",
         icon  : "car-sport-outline"
       },
+      {
+        title : "Logout",
+        url   : "/home",
+        icon  : "walk-outline",
+      },
     ]
   }
 }

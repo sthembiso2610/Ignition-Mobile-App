@@ -1,9 +1,42 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      </ion-buttons>
     <ion-title>refuel</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <form [formGroup]="form">
+  <ion-card>
+    <ion-card-header>
+      capture Refuel Details
+    </ion-card-header>
+    <ion-card-content>
+    <ion-item-divider>
+    <ion-label>Liters</ion-label>
+    <ion-input formControlName="liters" required type="number"></ion-input>
+  </ion-item-divider>
+  <ion-item-divider>
+    <ion-label>Mileage</ion-label>
+    <ion-input formControlName="KMReading" required type="number"></ion-input>
+  </ion-item-divider>
+  
+</ion-card-content>
+<ion-grid>
+  <ion-col>
+
+  </ion-col>
+  <ion-col>
+
+  </ion-col>
+  <ion-col>
+    <ion-button  (click)="submit()">Save</ion-button>
+  </ion-col>
+</ion-grid>
+
+  </ion-card>
+</form>
 </ion-content>

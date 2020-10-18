@@ -15,6 +15,8 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ScheduleModule } from '@syncfusion/ej2-angular-schedule';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +27,9 @@ import { ScheduleModule } from '@syncfusion/ej2-angular-schedule';
     AngularFireDatabaseModule,
     BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     ScheduleModule,
+    ReactiveFormsModule,
+    NoopAnimationsModule,
+   // SignaturePadModule
   ],
   providers: [
     StatusBar,

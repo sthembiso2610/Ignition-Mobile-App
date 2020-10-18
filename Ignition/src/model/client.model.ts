@@ -25,4 +25,5 @@ export interface Client {
   empType?: string; // -1 for clients, 0 for admin, 1 for normal emplyees, other customer emp types
   balance?: number;
   package?: IGNPackage;
+  licence?: string
 }

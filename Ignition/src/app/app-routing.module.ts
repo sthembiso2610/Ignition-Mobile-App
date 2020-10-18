@@ -27,6 +27,10 @@ const routes: Routes = [
     path: 'profile',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
   },
+  {
+    path: 'signature',
+    loadChildren: () => import('./signature/signature.module').then( m => m.SignaturePageModule)
+  },
 ];
 
 @NgModule({
