@@ -26,4 +26,5 @@ export interface Appointment {
   client?: Client;
   instructor?: Employee;
   service?: ServiceItem;
+  signature?: string;
 }

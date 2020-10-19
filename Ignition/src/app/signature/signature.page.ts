@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, NavController } from '@ionic/angular';
 import { SignaturePad } from 'angular2-signaturepad';
+import { DbService } from '../db.service';
 
 @Component({
   selector: 'app-signature',
@@ -17,7 +18,8 @@ export class SignaturePage implements OnInit {
   };
   
 @ViewChild(SignaturePad) signaturePad: SignaturePad
-  constructor(public navCtrl: NavController, private route: Router, public alertcontroller: AlertController) { }
+  constructor(public navCtrl: NavController, private route: Router, public alertcontroller: AlertController
+    ,public db: DbService) { }
 
   public signatureImage: string;
 //  public signaturePad: SignaturePad
@@ -31,6 +33,9 @@ export class SignaturePage implements OnInit {
 
     console.log(this.signaturePad)
     console.log(this.signaturePad.toDataURL())
+
+    this.db.appointment.signature = this.signaturePad.toDataURL()
+    this.db.updateAppointment(this.db.appointment)
    let alert = await this.alertcontroller.create({
      header: 'Success',
      message: "Signature Successfully Captured",

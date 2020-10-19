@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Toast } from '@capacitor/core';
 import { DbService } from 'src/app/db.service';
-
+import { AlertController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { AuthService } from '../auth.service';
 export class LogingPage implements OnInit {
   form: FormGroup;
   passwordMinLength = 6;
-  constructor(private service: AuthService, private fb: FormBuilder, private router: Router,private db: DbService) { }
+  constructor(private service: AuthService, private fb: FormBuilder, private router: Router,private db: DbService, public alertcontroller: AlertController) { }
 
   ngOnInit() {
 
@@ -44,26 +44,29 @@ export class LogingPage implements OnInit {
 	}
 
 
-  loginUser()
+  async loginUser()
   {
     let email = this.form.controls['email'].value;
     let  password =   this.form.controls['password'].value
     this.service.loginUser(email,password).then(x=>
       {
-        this.db.userIsActive(x.user.uid).then(y=>
+        this.db.userIsActive(x.user.uid).then(async y=>
           {
             if (x)
             {
               console.log('user exist', x)
-               this.router.navigate(['/vehicles'])
+               this.router.navigate(['/calendar'])
             }
             else{
-               console.log('user doesnt exist')
+              let alert = await this.alertcontroller.create({message:'user doesnt exist'});
+              alert.present()
             }
           })
 
          
       })
   }
+
+  
 
 }

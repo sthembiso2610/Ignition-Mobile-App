@@ -60,6 +60,7 @@ export class CalendarPage implements OnInit {
             this.allAppointments.push(app)
           }
         )
+        console.log('app', this.allAppointments )
        
       })
       this.eventSettings = {
@@ -81,21 +82,31 @@ export class CalendarPage implements OnInit {
   console.log(this.eventSettings.dataSource)
      
   }
-
+  button: string
   async onPopupOpen(args: PopupOpenEventArgs)
   {
     if(this.db.user.empType == '1') {
       args.cancel = true
       let signatureStatus: boolean = false;
+      
       if( Object.keys((<Appointment>args.data)).length <= 8)
       {
   
       }
-    if( (<Appointment>args.data).EndTime >=  new Date(Date.now() - 60* 60* 1000) && (<Appointment>args.data).StartTime <=  new Date(Date.now()) )
+    //if( (<Appointment>args.data).EndTime >=  new Date(Date.now() - 60* 60* 1000) && (<Appointment>args.data).StartTime <=  new Date(Date.now()) )
+    //{
+      //   signatureStatus = true
+    //}
+    if((<Appointment>args.data).signature != null || (<Appointment>args.data).signature != undefined)
     {
-         signatureStatus = true
+      this.button = "View signature"
+    } 
+    else
+    {
+      this.button = "sign"
     }
-     {
+    
+     
      let alert = await this.alertController.create(
        {
          header: 'Appointment with ' + (<Appointment>args.data).client.name,
@@ -103,15 +114,32 @@ export class CalendarPage implements OnInit {
          "\n" + 'Licence Code:  Code' +  (<Appointment>args.data).client.licence
          + "\n" + "from: " + (<Appointment>args.data).StartTime.getHours() + ":" +
          (<Appointment>args.data).StartTime.getMinutes() + "0"
-           +"\n" + " To: " +
-         (<Appointment>args.data).EndTime.getHours() + ":" + (<Appointment>args.data).EndTime.getMinutes() +"0" ,
+           +"\n" + " To: " + 
+         (<Appointment>args.data).EndTime.getHours() + ":" + (<Appointment>args.data).EndTime.getMinutes() +"0" 
+         + "Delegated to employee:" +  (<Appointment>args.data).empName,
+        
           buttons:[
             {
-              text: 'Sign',
-              handler: (x)=>
+            
+              text: this.button,
+              handler: async (x)=>
               {
-                console.log('condirm')
-              this.router.navigateByUrl('/signature')
+                if(this.button == " sign")
+                {
+                  this.router.navigateByUrl('/signature')
+                }
+                else
+                {
+                  let aler = await this.alertController.create(
+                    {message: `<img src="${(<Appointment>args.data).signature}">`,
+                  }
+                  
+                  )
+                  aler.present()
+                }
+                console.log('confirm')
+              this.db.appointment =  (<Appointment>args.data)
+             
               }
             },
                {
@@ -140,7 +168,7 @@ export class CalendarPage implements OnInit {
  
    }
   }
-}
+
 
   onAction()
   {

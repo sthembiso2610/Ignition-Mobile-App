@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { AlertController } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import { EmergencyContact } from 'src/model/emergencyContact.model';
 import { IGNUser } from 'src/model/user.model';
 import { DbService } from '../db.service';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-profile',
@@ -23,6 +25,14 @@ export class ProfilePage implements OnInit {
   init: boolean = false;
   genderOptions: string[] = ['Male', 'Female']
   relations: string[] = ['Mother', 'Father', 'Friend', 'Guardian']
+	// Progress monitoring
+	percentage: Observable<number>;
+	filename: string;
+	fileref: string;
+	task: AngularFireUploadTask;
+	snapshot: Observable<any>;
+
+//	@Select(AppState.user) user$: Observable<IGNUser>;
 
 
   constructor(	private router: Router,
@@ -30,15 +40,17 @@ export class ProfilePage implements OnInit {
 	
 		private route: ActivatedRoute,
 	//	private flash: FlashService,
-		
+		private alertController: AlertController,
 		private fb: FormBuilder,
 		private db: DbService,
+		private storage: AngularFireStorage,
+	
 	) { }
 
   ngOnInit() {
 
     this.empForm = this.fb.group({
-			empType: [ '', [ Validators.required ] ],
+
 			idnum: [
 				'',
 				[
@@ -154,6 +166,77 @@ export class ProfilePage implements OnInit {
 			return false;
     }
   }
+
+
+  async startUpload(event: FileList) {
+  //  const user: IGNUser = this.store.snapshot().app.user;
+   
+       let loggedIn  = this.db.user
+    
+
+		// The File object
+		const file = event.item(0);
+		if (!file.type.includes('image')) {
+		let alert = this.alertController.create({message:'Please make sure your file is an image'});
+			return;
+		}
+
+		// The storage path
+		const path = `files/${loggedIn.uid}/${new Date().getTime()}_${file.name}`;
+		this.filename = file.name;
+		this.fileref = path;
+    const fileRef = this.storage.ref(path);
+    console.log('this is the file ref', this.fileref)
+		// Totally optional metadata
+		const customMetadata = { app: 'Angular PWA' };
+
+		// The main task
+		this.task = this.storage.upload(path, file, { customMetadata });
+
+		// Progress monitoring
+		this.percentage = this.task.percentageChanges();
+		this.snapshot = this.task.snapshotChanges();
+
+		// The file's download URL
+		this.task
+			.snapshotChanges()
+			.pipe(
+				finalize(() => {
+					fileRef.getDownloadURL().subscribe((url) => {
+			console.log('this is the url', url)
+							this.db.user.imageUrl = url
+						this.updateProfile({
+							imageUrl: url
+            });
+					});
+				})
+			)
+			.subscribe();
+	}
+
+	ngOnDestroy(): void {
+		this.unsubscribe.forEach((e) => {
+			if (!e.closed) {
+				e.unsubscribe();
+			}
+		});
+	}
+
+	updateProfile(update) {
+		//this.loading.show();
+		this.db
+			.updateProfile(update)
+			.then(async () => {
+			//	this.loading.hide();
+			let alert = await	this.alertController.create({message:'profile updated'});
+				alert.present()
+			})
+			.catch(async (e) => {
+				//this.loading.hide();
+				let alert = await	this.alertController.create({message:e.message});
+				alert.present()
+			});
+	}
 
   submit()
   {
